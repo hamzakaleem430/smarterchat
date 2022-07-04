@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smarterchat/pages/meeting_screen.dart';
+import 'package:smarterchat/services/video_calling_services.dart';
 
 class NewMeetingPage extends StatefulWidget {
   const NewMeetingPage({Key? key}) : super(key: key);
@@ -60,30 +61,33 @@ class _NewMeetingPageState extends State<NewMeetingPage> {
                 SizedBox(
                   height: .1.sh,
                 ),
-                PhysicalModel(
-                  color: Colors.transparent,
-                  elevation: 10,
-                  child: Container(
-                    width: .15.sh,
-                    height: .15.sh,
-                    decoration: BoxDecoration(
-                      color: Colors.blueAccent,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 40.sp,
-                        ),
-                        Text(
-                          'Join Meeting',
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 15.sp),
-                        ),
-                      ],
+                InkWell(
+                  onTap: () {},
+                  child: PhysicalModel(
+                    color: Colors.transparent,
+                    elevation: 10,
+                    child: Container(
+                      width: .15.sh,
+                      height: .15.sh,
+                      decoration: BoxDecoration(
+                        color: Colors.blueAccent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 40.sp,
+                          ),
+                          Text(
+                            'Join Meeting',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 15.sp),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

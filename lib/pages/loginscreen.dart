@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smarterchat/pages/homepage.dart';
 import 'package:smarterchat/pages/signup_screen.dart';
+import 'package:smarterchat/services/auth_services.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -16,9 +18,9 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _hidePassword = true;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-
+  LoginResponse? _loginResponse;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  AuthServices _authServices = AuthServices();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +74,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: .01.sh,
                     ),
                     TextFormField(
-                      validator: (value) {},
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Field is required.';
+                        } else if (_loginResponse ==
+                            LoginResponse.InvalidEmail) {
+                          return 'Email is invalid.';
+                        } else if (_loginResponse ==
+                            LoginResponse.UserNotFound) {
+                          return 'No User found for this email.';
+                        }
+                      },
                       controller: _emailController,
                       decoration: InputDecoration(
                         hintText: 'Enter Email',
@@ -105,7 +117,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     TextFormField(
                       obscureText: _hidePassword,
-                      validator: (value) {},
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Field is required.';
+                        } else if (_loginResponse ==
+                            LoginResponse.IncorrectPassword) {
+                          return 'Incorrect Password. Please Try Again.';
+                        }
+                      },
                       controller: _passwordController,
                       decoration: InputDecoration(
                           suffixIcon: IconButton(
@@ -147,56 +166,59 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: .015.sh,
                     ),
-                    // _loginResponse == LoginResponse.EmailNotVerified
-                    //     ?
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     Text(
-                    //       'Email Not Verified.',
-                    //       style: TextStyle(color: Colors.red),
-                    //     ),
-                    //     TextButton(
-                    //       onPressed: () {},
-                    //       child: Text(
-                    //         'Resend Verification Email',
-                    //         style: TextStyle(fontWeight: FontWeight.bold),
-                    //       ),
-                    //     )
-                    //   ],
-                    // ),
-                    // : SizedBox(),
+                    _loginResponse == LoginResponse.EmailNotVerified
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Email Not Verified.',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  _authServices.sendVerificationEmail();
+                                },
+                                child: Text(
+                                  'Resend Verification Email',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            ],
+                          )
+                        : SizedBox(),
                     Container(
                       alignment: Alignment.center,
                       child: ElevatedButton(
                         onPressed: loading
                             ? null
                             : () {
-                                // setState(() {
-                                //   _loginResponse = null;
-                                // });
-                                // if (_formKey.currentState!.validate()) {
-                                //   setState(() {
-                                //     loading = true;
-                                //   });
-                                //   _authServices
-                                //       .login(
-                                //           email: _emailController.text,
-                                //           password: _passwordController.text)
-                                //       .then((value) {
-                                //     if (value ==
-                                //         LoginResponse.LogInSuccessful) {
-                                //       Navigator.pushReplacementNamed(
-                                //           context, '/home');
-                                //     } else {
-                                //       setState(() {
-                                //         loading = false;
-                                //         _loginResponse = value;
-                                //       });
-                                //       _formKey.currentState!.validate();
-                                //     }
-                                //   });
-                                // }
+                                setState(() {
+                                  _loginResponse = null;
+                                });
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    loading = true;
+                                  });
+                                  _authServices
+                                      .login(
+                                          email: _emailController.text,
+                                          password: _passwordController.text)
+                                      .then((value) {
+                                    if (value ==
+                                        LoginResponse.LogInSuccessful) {
+                                      Navigator.pushReplacement(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return HomePage();
+                                      }));
+                                    } else {
+                                      setState(() {
+                                        loading = false;
+                                        _loginResponse = value;
+                                      });
+                                      _formKey.currentState!.validate();
+                                    }
+                                  });
+                                }
                               },
                         child: loading
                             ? CircularProgressIndicator(

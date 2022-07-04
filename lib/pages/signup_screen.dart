@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smarterchat/pages/homepage.dart';
 import 'package:smarterchat/pages/loginscreen.dart';
+import 'package:smarterchat/pages/sent_verification_email.dart';
+import 'package:smarterchat/services/auth_services.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -15,8 +17,9 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   bool _hidePassword = true;
   bool _hideConfirmPassword = true;
+  SignUpResponse? _signUpResponse;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  AuthServices _authServices = AuthServices();
   TextEditingController _fullNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -222,42 +225,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       alignment: Alignment.center,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) {
-                            return HomePage();
-                          }));
-                          // setState(() {
-                          //   _signUpResponse = null;
-                          // });
-                          // if (_formKey.currentState!.validate()) {
-                          //   _authServices
-                          //       .signUp(
-                          //           email: _emailController.text,
-                          //           password: _passwordController.text,
-                          //           fullName: _fullNameController.text)
-                          //       .then((signupResponse) {
-                          //     if (signupResponse ==
-                          //         SignUpResponse.SignUpSuccessful) {
-                          //       Navigator.of(context)
-                          //           .push(MaterialPageRoute(builder: (context) {
-                          //         return SentVerificationEmail(
-                          //           email: _emailController.text,
-                          //         );
-                          //       }));
-                          //     } else if (_signUpResponse ==
-                          //         SignUpResponse.UnkownError) {
-                          //       ScaffoldMessenger.of(context).showSnackBar(
-                          //           SnackBar(
-                          //               content: Text(
-                          //                   'Unkown Error.Please Try Again.')));
-                          //     } else {
-                          //       setState(() {
-                          //         _signUpResponse = signupResponse;
-                          //       });
-                          //       _formKey.currentState!.validate();
-                          //     }
-                          //   });
-                          // }
+                          setState(() {
+                            _signUpResponse = null;
+                          });
+                          if (_formKey.currentState!.validate()) {
+                            _authServices
+                                .signUp(
+                                    email: _emailController.text,
+                                    password: _passwordController.text,
+                                    fullName: _fullNameController.text)
+                                .then((signupResponse) {
+                              if (signupResponse ==
+                                  SignUpResponse.SignUpSuccessful) {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (context) {
+                                  return SentVerificationEmail(
+                                    email: _emailController.text,
+                                  );
+                                }));
+                              } else if (_signUpResponse ==
+                                  SignUpResponse.UnkownError) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Unkown Error.Please Try Again.')));
+                              } else {
+                                setState(() {
+                                  _signUpResponse = signupResponse;
+                                });
+                                _formKey.currentState!.validate();
+                              }
+                            });
+                          }
                         },
                         child: Text('Signup'),
                         style: ElevatedButton.styleFrom(

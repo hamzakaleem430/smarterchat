@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "139770139956",
+    "project_id": "smarterchat-a2e22",
+    "storage_bucket": "smarterchat-a2e22.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139770139956:android:62649222c13fa3cd4b8161",
+        "android_client_info": {
+          "package_name": "com.example.smarterchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "139770139956-b6dooejbfqoocem5ipitfdgq2h1p11fj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDckJX6-SJ9W59IraFjRsGWU3ldBgGzEIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "139770139956-b6dooejbfqoocem5ipitfdgq2h1p11fj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

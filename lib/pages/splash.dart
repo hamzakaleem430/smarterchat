@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smarterchat/pages/homepage.dart';
 import 'package:smarterchat/pages/loginscreen.dart';
+import 'package:smarterchat/services/auth_services.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -13,10 +15,17 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     Future.delayed(const Duration(milliseconds: 1500), () {}).then((value) {
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) {
-        return LoginScreen();
-      }));
+      if (AuthServices().isLoggedIn()) {
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (context) {
+          return HomePage();
+        }));
+      } else {
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (context) {
+          return LoginScreen();
+        }));
+      }
     });
     super.initState();
   }

@@ -37,6 +37,15 @@ dependencies:
   animated_bottom_navigation_bar: ^0.3.2
   flutter_screenutil: ^5.3.1
   google_fonts: ^2.3.1
+  firebase_auth: ^3.3.14
+  firebase_core: ^1.14.1
+  image_picker: ^0.8.5
+  shared_preferences: ^2.0.13
+  fluttertoast: ^8.0.9
+  firebase_storage: ^10.2.12
+  cloud_firestore: ^3.1.12
+  agora_rtc_engine: ^5.2.0
+  permission_handler: ^10.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
