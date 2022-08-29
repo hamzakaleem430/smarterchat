@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
-import 'package:smarterchat/services/video_calling_services.dart';
+import 'package:jitsi_meet/jitsi_meet.dart';
 
 class MeetingScreen extends StatefulWidget {
   const MeetingScreen({Key? key}) : super(key: key);
@@ -12,7 +11,6 @@ class MeetingScreen extends StatefulWidget {
 class _MeetingScreenState extends State<MeetingScreen> {
   @override
   void initState() {
-    VCServices().startACall();
     super.initState();
   }
 
@@ -23,7 +21,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            Expanded(child: RtcLocalView.SurfaceView()),
+            JitsiMeetConferencing(),
             Positioned(
               bottom: 20,
               left: 0,

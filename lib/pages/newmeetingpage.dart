@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:smarterchat/pages/meeting_screen.dart';
 import 'package:smarterchat/services/video_calling_services.dart';
 
 class NewMeetingPage extends StatefulWidget {
@@ -11,6 +10,13 @@ class NewMeetingPage extends StatefulWidget {
 }
 
 class _NewMeetingPageState extends State<NewMeetingPage> {
+  bool enableAudio = true;
+
+  bool enableVideo = true;
+  GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _meetingRoomIdController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -28,10 +34,195 @@ class _NewMeetingPageState extends State<NewMeetingPage> {
                   elevation: 10,
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) {
-                        return MeetingScreen();
-                      }));
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              child:
+                                  StatefulBuilder(builder: (context, setState) {
+                                return ScreenUtilInit(builder: () {
+                                  return SingleChildScrollView(
+                                    child: Container(
+                                      padding: EdgeInsets.all(20),
+                                      child: Form(
+                                        key: _globalKey,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Name :',
+                                              style: TextStyle(
+                                                fontSize: 15.sp,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: .01.sh,
+                                            ),
+                                            SizedBox(
+                                              child: TextFormField(
+                                                controller: _nameController,
+                                                validator: (v) {
+                                                  if (v!.isEmpty) {
+                                                    return "Field is required";
+                                                  }
+                                                },
+                                                decoration: InputDecoration(
+                                                  hintText: "Username",
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 10),
+                                                  border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.zero),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: .01.sh,
+                                            ),
+                                            Text(
+                                              'Email :',
+                                              style: TextStyle(
+                                                fontSize: 15.sp,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: .005.sh,
+                                            ),
+                                            SizedBox(
+                                              child: TextFormField(
+                                                validator: (v) {
+                                                  if (v!.isEmpty) {
+                                                    return "Field is required";
+                                                  }
+                                                },
+                                                controller: _emailController,
+                                                decoration: InputDecoration(
+                                                  hintText: "Email",
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 10),
+                                                  border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.zero),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: .01.sh,
+                                            ),
+                                            // Text(
+                                            //   'Meeting Room Id:',
+                                            //   style: TextStyle(
+                                            //     fontSize: 15.sp,
+                                            //   ),
+                                            // ),
+                                            // SizedBox(
+                                            //   height: .01.sh,
+                                            // ),
+                                            // SizedBox(
+                                            //   child: TextFormField(
+                                            //     validator: (v) {
+                                            //       if (v!.isEmpty) {
+                                            //         return "Field is required";
+                                            //       }
+                                            //     },
+                                            //     controller:
+                                            //         _meetingRoomIdController,
+                                            //     decoration: InputDecoration(
+                                            //       hintText: "Meeting Room Id",
+                                            //       contentPadding:
+                                            //           EdgeInsets.symmetric(
+                                            //               horizontal: 10),
+                                            //       border: OutlineInputBorder(
+                                            //           borderRadius:
+                                            //               BorderRadius.zero),
+                                            //     ),
+                                            //   ),
+                                            // ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text('Enable Audio :'),
+                                                Switch(
+                                                    value: enableAudio,
+                                                    onChanged: (a) {
+                                                      setState(() {
+                                                        enableAudio = a;
+                                                      });
+                                                    })
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text('Enable Video :'),
+                                                Switch(
+                                                    value: enableVideo,
+                                                    onChanged: (a) {
+                                                      setState(() {
+                                                        enableVideo = a;
+                                                      });
+                                                    })
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                OutlinedButton(
+                                                  onPressed: () {
+                                                    _nameController.clear();
+                                                    _emailController.clear();
+
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(
+                                                    'Cancel',
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: .1.sw,
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    if (_globalKey.currentState!
+                                                        .validate()) {
+                                                      String id =
+                                                          _emailController.text
+                                                              .split('@')
+                                                              .first;
+                                                      VideoCallingServices()
+                                                          .joinMeeting(
+                                                              _nameController
+                                                                  .text,
+                                                              _emailController
+                                                                  .text,
+                                                              id,
+                                                              enableAudio,
+                                                              enableVideo);
+                                                    }
+                                                  },
+                                                  child: Text(
+                                                    'Join Meeting',
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                });
+                              }),
+                            );
+                          });
                     },
                     child: Container(
                       width: .15.sh,
@@ -48,10 +239,13 @@ class _NewMeetingPageState extends State<NewMeetingPage> {
                             color: Colors.white,
                             size: 40.sp,
                           ),
-                          Text(
-                            'New Meeting',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 15.sp),
+                          FittedBox(
+                            child: Text(
+                              'New Meeting',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -62,7 +256,193 @@ class _NewMeetingPageState extends State<NewMeetingPage> {
                   height: .1.sh,
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Dialog(
+                            child:
+                                StatefulBuilder(builder: (context, setState) {
+                              return ScreenUtilInit(builder: () {
+                                return SingleChildScrollView(
+                                  child: Container(
+                                    padding: EdgeInsets.all(20),
+                                    child: Form(
+                                      key: _globalKey,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Name :',
+                                            style: TextStyle(
+                                              fontSize: 15.sp,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: .01.sh,
+                                          ),
+                                          SizedBox(
+                                            child: TextFormField(
+                                              controller: _nameController,
+                                              validator: (v) {
+                                                if (v!.isEmpty) {
+                                                  return "Field is required";
+                                                }
+                                              },
+                                              decoration: InputDecoration(
+                                                hintText: "Username",
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.zero),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: .01.sh,
+                                          ),
+                                          Text(
+                                            'Email :',
+                                            style: TextStyle(
+                                              fontSize: 15.sp,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: .005.sh,
+                                          ),
+                                          SizedBox(
+                                            child: TextFormField(
+                                              validator: (v) {
+                                                if (v!.isEmpty) {
+                                                  return "Field is required";
+                                                }
+                                              },
+                                              controller: _emailController,
+                                              decoration: InputDecoration(
+                                                hintText: "Email",
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.zero),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: .01.sh,
+                                          ),
+                                          Text(
+                                            'Meeting Room Id:',
+                                            style: TextStyle(
+                                              fontSize: 15.sp,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: .01.sh,
+                                          ),
+                                          SizedBox(
+                                            child: TextFormField(
+                                              validator: (v) {
+                                                if (v!.isEmpty) {
+                                                  return "Field is required";
+                                                }
+                                              },
+                                              controller:
+                                                  _meetingRoomIdController,
+                                              decoration: InputDecoration(
+                                                hintText: "Meeting Room Id",
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.zero),
+                                              ),
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text('Enable Audio :'),
+                                              Switch(
+                                                  value: enableAudio,
+                                                  onChanged: (a) {
+                                                    setState(() {
+                                                      enableAudio = a;
+                                                    });
+                                                  })
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text('Enable Video :'),
+                                              Switch(
+                                                  value: enableVideo,
+                                                  onChanged: (a) {
+                                                    setState(() {
+                                                      enableVideo = a;
+                                                    });
+                                                  })
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              OutlinedButton(
+                                                onPressed: () {
+                                                  _nameController.clear();
+                                                  _emailController.clear();
+                                                  _meetingRoomIdController
+                                                      .clear();
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  'Cancel',
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: .1.sw,
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  if (_globalKey.currentState!
+                                                      .validate()) {
+                                                    VideoCallingServices()
+                                                        .joinMeeting(
+                                                            _nameController
+                                                                .text,
+                                                            _emailController
+                                                                .text,
+                                                            _meetingRoomIdController
+                                                                .text,
+                                                            enableAudio,
+                                                            enableVideo);
+                                                  }
+                                                },
+                                                child: Text(
+                                                  'Join Meeting',
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              });
+                            }),
+                          );
+                        });
+                  },
                   child: PhysicalModel(
                     color: Colors.transparent,
                     elevation: 10,
@@ -81,10 +461,13 @@ class _NewMeetingPageState extends State<NewMeetingPage> {
                             color: Colors.white,
                             size: 40.sp,
                           ),
-                          Text(
-                            'Join Meeting',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 15.sp),
+                          FittedBox(
+                            child: Text(
+                              'Join Meeting',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -112,10 +495,13 @@ class _NewMeetingPageState extends State<NewMeetingPage> {
                           color: Colors.white,
                           size: 40.sp,
                         ),
-                        Text(
-                          'User Settings',
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 15.sp),
+                        FittedBox(
+                          child: Text(
+                            'User Settings',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ],
                     ),
