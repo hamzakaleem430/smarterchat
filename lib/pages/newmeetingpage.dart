@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:smarterchat/pages/detectScreen.dart';
 import 'package:smarterchat/services/video_calling_services.dart';
 
 class NewMeetingPage extends StatefulWidget {
@@ -205,7 +206,8 @@ class _NewMeetingPageState extends State<NewMeetingPage> {
                                                                   .text,
                                                               id,
                                                               enableAudio,
-                                                              enableVideo);
+                                                              enableVideo,
+                                                              context: context);
                                                     }
                                                   },
                                                   child: Text(
@@ -424,7 +426,8 @@ class _NewMeetingPageState extends State<NewMeetingPage> {
                                                             _meetingRoomIdController
                                                                 .text,
                                                             enableAudio,
-                                                            enableVideo);
+                                                            enableVideo,
+                                                            context: context);
                                                   }
                                                 },
                                                 child: Text(
@@ -480,30 +483,164 @@ class _NewMeetingPageState extends State<NewMeetingPage> {
                 PhysicalModel(
                   color: Colors.transparent,
                   elevation: 10,
-                  child: Container(
-                    width: .15.sh,
-                    height: .15.sh,
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 158, 58, 183),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.settings,
-                          color: Colors.white,
-                          size: 40.sp,
-                        ),
-                        FittedBox(
-                          child: Text(
-                            'User Settings',
-                            style: TextStyle(
-                              color: Colors.white,
+                  child: GestureDetector(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              child:
+                                  StatefulBuilder(builder: (context, setState) {
+                                return ScreenUtilInit(builder: () {
+                                  return SingleChildScrollView(
+                                    child: Container(
+                                      padding: EdgeInsets.all(20),
+                                      child: Form(
+                                        key: _globalKey,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Username :',
+                                              style: TextStyle(
+                                                fontSize: 15.sp,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: .01.sh,
+                                            ),
+                                            SizedBox(
+                                              child: TextFormField(
+                                                validator: (v) {
+                                                  if (v!.isEmpty) {
+                                                    return "Field is required";
+                                                  }
+                                                },
+                                                controller: _nameController,
+                                                decoration: InputDecoration(
+                                                  hintText: "Username",
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 10),
+                                                  border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.zero),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: .02.sh,
+                                            ),
+                                            Text(
+                                              'Meeting Room Id:',
+                                              style: TextStyle(
+                                                fontSize: 15.sp,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: .01.sh,
+                                            ),
+                                            SizedBox(
+                                              child: TextFormField(
+                                                validator: (v) {
+                                                  if (v!.isEmpty) {
+                                                    return "Field is required";
+                                                  }
+                                                },
+                                                controller:
+                                                    _meetingRoomIdController,
+                                                decoration: InputDecoration(
+                                                  hintText: "Meeting Room Id",
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 10),
+                                                  border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.zero),
+                                                ),
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                OutlinedButton(
+                                                  onPressed: () {
+                                                    _nameController.clear();
+                                                    _emailController.clear();
+                                                    _meetingRoomIdController
+                                                        .clear();
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(
+                                                    'Cancel',
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: .1.sw,
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    if (_globalKey.currentState!
+                                                        .validate()) {
+                                                      Navigator.of(context).push(
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) {
+                                                        return DetectScreen(
+                                                            username:
+                                                                _nameController
+                                                                    .text,
+                                                            meetingId:
+                                                                _meetingRoomIdController
+                                                                    .text,
+                                                            title:
+                                                                "Detection Screen");
+                                                      }));
+                                                    }
+                                                  },
+                                                  child: Text(
+                                                    'Start Detecting',
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                });
+                              }),
+                            );
+                          });
+                    },
+                    child: Container(
+                      width: .15.sh,
+                      height: .15.sh,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 158, 58, 183),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.gesture,
+                            color: Colors.white,
+                            size: 40.sp,
+                          ),
+                          FittedBox(
+                            child: Text(
+                              'Detect Gestures',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
